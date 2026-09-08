@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>待拆分草稿 · 模型到底在学什么？</title><link rel="stylesheet" href="../assets/course.css"><script src="../assets/parameter-lab.js" defer></script></head>
+<body><main>
+<nav><a href="../README.md">学习目录</a><a href="../reference/model-basics.html">概念速查</a></nav>
+<p class="meta">待拆分草稿 · 先完成入门概念，再学习参数与损失</p>
+<h1>模型到底在学什么？</h1>
+<p>今天只解决一个问题：<strong>模型中的一个数改变时，预测为什么会改变？</strong>先看清一个参数，后面才能理解由大量参数组成的模型。</p>
+<section><h2>1. 一个可以调整的计算规则</h2>
+<p>给你三组人为构造的数据：输入 1，目标是 2；输入 2，目标是 4；输入 3，目标是 6。我们选一个很小的模型：</p>
+<pre>预测值 = w × 输入值</pre>
+<p><code>w</code> 是<strong>参数</strong>，也就是模型中可以调整的数。输入是 3、w 是 1 时，预测就是 3；把 w 改成 2，预测就变成 6。这里预先选好了乘法规则，要寻找的是合适的 w。一般的线性回归还可以有偏置，这一课先固定为 0。<a href="https://d2l.ai/chapter_linear-regression/linear-regression.html#basics">[来源：模型与参数]</a></p>
+</section>
+<section><h2>2. 让预测靠近目标</h2>
+<p>先猜一下：把 w 从 1 调大一点，预测会更接近目标吗？然后调整它，找出让三组预测都吻合的 w。</p>
+<label for="weight">参数 w = <output id="weight-value" for="weight">1.0</output></label>
+<input id="weight" type="range" min="0" max="4" step="0.1" value="1">
+<figure><canvas id="plot" width="720" height="360" role="img" aria-label="预测随输入变化的图：绿色线是模型预测，橙色点是目标；精确数值见下表。"></canvas><figcaption>绿色：模型预测；橙色：目标。横轴为输入，纵轴为输出。</figcaption></figure>
+<table><thead><tr><th scope="col">输入</th><th scope="col">目标</th><th scope="col">预测</th><th scope="col">误差平方</th></tr></thead><tbody id="samples"></tbody></table>
+<p>平均平方误差：<output id="loss">4.67</output></p>
+<p>我们用<strong>损失</strong>衡量预测和目标的差距。本课把每组的「预测减目标」平方，再取平均；例如第一组预测 1、目标 2，误差平方就是 (1 − 2)² = 1。这里损失越小，代表这三组数据上预测越接近目标。<a href="https://d2l.ai/chapter_linear-regression/linear-regression.html#loss-function">[来源：损失函数]</a></p>
+<p>你刚才手动寻找了参数。训练算法也会根据损失来调整参数，后面会学习如何自动完成。<strong>这组数据上误差小，还不能保证新数据上也表现好。</strong> <a href="https://d2l.ai/chapter_linear-regression/linear-regression.html">[来源：训练与泛化]</a></p>
+</section>
+<section><h2>3. 不看上面，试着算一次</h2>
+<p>参数固定为 w = 2。来了一个新输入 4，模型预测是多少？</p>
+<form id="prediction-quiz"><label for="answer">你的预测值</label><input id="answer" type="number" step="any" required> <button type="submit">检查答案</button></form>
+<p id="quiz-feedback" class="feedback" role="status"></p>
+<p>最后回到对话，用自己的话回答：<strong>刚才为了让预测更准确，我们改变了什么？计算预测时是否还需要目标值？</strong> 有不清楚的地方，直接追问我。</p>
+</section>
+<section><h2>课后留一件事</h2><p>明天先不翻资料，试着解释“参数”和“预测”的区别。这比只重读一遍更能检验你是否记住了。</p><p>本课主资料：<a href="https://d2l.ai/chapter_linear-regression/linear-regression.html#loss-function">《动手学深度学习》3.1.1.2</a>。只看损失函数的文字和图即可，公式推导留到以后。复习时查阅<a href="../reference/model-basics.html">本课速查</a>。</p></section>
+<noscript><p>交互实验需要启用 JavaScript。也可以手算：分别取 w = 1 和 w = 2，对输入 1、2、3 计算预测，再与目标 2、4、6 比较。</p></noscript>
+</main></body></html>

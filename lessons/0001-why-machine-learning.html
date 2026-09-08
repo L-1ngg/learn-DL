@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>01 · 为什么需要机器学习？</title><link rel="stylesheet" href="../assets/course.css"><script src="../assets/choice-quiz.js" defer></script></head>
+<body><main>
+<nav><a href="../README.md">学习目录</a><a href="../reference/learning-from-examples.html">本课速查</a></nav>
+<p class="meta">第一课 · 从一个生活例子开始</p>
+<h1>为什么需要机器学习？</h1>
+<p>假设你想让程序帮你挑出垃圾邮件。你能判断不少邮件，但要把判断方法一条条写给程序，容易吗？</p>
+<section><h2>1. 先由人写一条规则</h2>
+<p>我们规定：<strong>只要出现“免费”，就判为垃圾邮件。</strong>程序照着执行，不会自行知道规则哪里不合适。</p>
+<figure><table><thead><tr><th scope="col">邮件片段</th><th scope="col">按这条规则</th><th scope="col">已知类别</th></tr></thead><tbody>
+<tr><td>免费领奖，立即提供银行卡密码</td><td>垃圾邮件</td><td>垃圾邮件</td></tr>
+<tr><td>你报名的免费公开课明天开讲</td><td>垃圾邮件</td><td>正常邮件</td></tr>
+</tbody></table><figcaption>为本课构造的两个例子。第二封是你报名后收到的正常通知，却被这条规则误判。</figcaption></figure>
+<p>你可以继续补规则，但不同措辞和情境会带来更多例外。对于这类很难把判断规则写全的任务，我们可以考虑机器学习；像“把商品价格相加”这样规则明确的任务，直接编程就很好。<a href="https://d2l.ai/chapter_introduction/index.html">[来源：导言]</a></p>
+</section>
+<section><h2>2. 换一种方式：从例子中学习</h2>
+<p>另一种做法是：收集许多邮件，并给出已经确认的类别，例如“这封是垃圾邮件，那封是正常邮件”。让学习算法根据这些例子调整判断方式，然后用得到的<strong>模型</strong>判断新邮件。这里先把模型理解为学出来、用于作判断的计算工具。<a href="https://d2l.ai/chapter_introduction/index.html#key-components">[来源：带答案的学习任务]</a></p>
+<p><strong>区别在于判断方式如何得到：</strong>前一种由人直接指定具体规则；后一种由学习算法根据例子形成。人仍需要准备数据、选择方法并检查效果。</p>
+<p>“学习”不会凭空发生，也不保证判断正确。这两个例子只用来说明思路，远不足以训练可靠的邮件模型。今天先理解为什么要这样做，之后再拆开看它具体如何学习。</p>
+</section>
+<section><h2>3. 换个例子，判断一下</h2>
+<p>一个水果分拣程序使用了机器学习。下面哪种描述体现了“从例子中学习”？</p>
+<form data-choice-quiz>
+<label><input type="radio" name="approach" value="rules" required> 人直接写好每条判断规则</label>
+<label><input type="radio" name="approach" value="examples" required> 算法参考例子形成判断法</label>
+<p><button type="submit">检查答案</button></p>
+<p class="feedback" role="status" data-feedback></p>
+</form>
+<p>回到对话，试着用自己的话说：<strong>为什么“出现免费就拦截”这条规则不够好？从例子中学习，换了哪一种做法？</strong>解释不清的地方直接问我，我们就在这里继续。</p>
+</section>
+<section><h2>今天到这里就够了</h2><p>稍后不看页面，试着举一个“判断规则很难写全”的任务。下一次会先回顾，再认识给机器看的“例子”和“答案”。</p><p>主资料：<a href="https://d2l.ai/chapter_introduction/index.html">《动手学深度学习》导言</a>，可选读开头到 1.1 之前的内容，无需读完整章。复习用<a href="../reference/learning-from-examples.html">本课速查</a>。</p></section>
+<noscript><p>可直接口头作答，回到对话获取反馈。</p></noscript>
+</main></body></html>

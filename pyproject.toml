@@ -1,0 +1,9 @@
+[project]
+name = "learn-dl"
+version = "0.1.0"
+description = "深度学习学习笔记与 Python 实验"
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.11.1",
+    "torch>=2.14.0",
+]

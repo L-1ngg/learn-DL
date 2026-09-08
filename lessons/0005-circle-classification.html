@@ -1,0 +1,13 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Demo 2 · 从直线到弯曲边界</title><link rel="stylesheet" href="../assets/course.css"></head><body><main>
+<nav><a href="0004-noisy-line-demo.html">上一 demo</a><a href="../demos/02-circle-classification/README.md">代码说明与练习</a><a href="../reference/neural-classifier.html">本课速查</a></nav>
+<h1>Demo 2：从直线到弯曲边界</h1><p>目标：观察一个小神经网络怎样区分圆内和圆外的点，理解隐藏层和激活函数各自的作用。</p><pre><code>uv run demos/02-circle-classification/main.py</code></pre>
+<figure><img src="../demos/02-circle-classification/outputs/boundaries.png" style="width:100%" alt="三个模型分类边界：小网络能形成围住圆内点的边界；两个线性对照本次都预测为圆外。先运行命令生成图。"><figcaption>红点：圆内；蓝点：圆外。橙背景：预测圆内；浅蓝背景：预测圆外。灰虚线是已知真实圆，黑实线才是模型边界。</figcaption></figure>
+<section><h2>一个模型，三个步骤</h2><pre><code>nn.Sequential(
+    nn.Linear(2, 16),
+    nn.Tanh(),
+    nn.Linear(16, 1),
+)</code></pre><p>输入一个点的两个坐标，先计算出 16 个中间数，再经过 Tanh 非线性变换，最后得到一个分类分数。中间这些数构成隐藏层的表示，所有点共用同一套参数。</p><p>Tanh 对每个数单独作非线性变换，不需要先背公式。关键是它让整个模型不能再合并成一次简单的线性计算。<a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Tanh.html">来源：PyTorch Tanh</a>。</p></section>
+<section><h2>为什么多加一层还不够？</h2><p>我们额外训练了一个把 Tanh 换成 Identity（原样传递）的网络。它和小网络都是 65 个参数，初始权重也相同，但本次测试准确率分别约 48.3% 与 96.7%。单独叠加线性层仍然是线性变换；非线性激活让模型能够表达更丰富的边界。更多参数本身不能保证这一点。</p><p>本次两个线性模型把图中所有点判为类别 0，所以没有可见的黑色分类边界。不是绘图缺失，也不能把真实圆的虚线看作模型预测。</p></section>
+<section><h2>这次怎样判断对错？</h2><p>输出是分类分数 logit，分数大于等于 0 判为圆内，否则判为圆外。训练使用二分类交叉熵，它衡量分数和真实类别是否相符；测试准确率则是判对的比例。这两种指标用途不同。</p><p><code>BCEWithLogitsLoss</code> 已经包含 sigmoid 对应的计算，因此训练前不另外做 sigmoid。<a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.BCEWithLogitsLoss.html">来源：PyTorch 损失函数</a>。</p></section>
+<section><h2>修改后再观察</h2><p>按<a href="../demos/02-circle-classification/README.md">操作说明</a>，把隐藏层从 16 个数缩减到 2 个数，其他设置保持一致。先猜边界会怎样变化，再运行。输出会覆盖上次图片，请先记录基准结果。</p><details><summary>观察提示</summary><p>重点看边界的形状，而不仅是一个准确率数字。隐藏层维度减少，会限制这个网络能够形成的中间表示；实际训练效果还受优化影响，不能把一次结果当作所有网络的定律。</p></details><p>把修改后的图或疑问带回对话，我们从实际现象继续。</p></section>
+</main></body></html>

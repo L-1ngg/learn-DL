@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>02 · 模型到底是什么？</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body><main><nav><a href="0001-why-machine-learning.html">上一课</a><a href="../reference/learning-from-examples.html">概念速查</a></nav>
+<p class="meta">第二课 · 一个核心问题</p><h1>模型到底是什么？</h1>
+<p>你已经知道输入、标签与预测。现在看它们中间缺的那一环：是谁把输入变成了预测？</p>
+<section><h2>模型是一套计算工具</h2><p>模型接收输入，经过计算，给出预测。它可以简单到只做少量算术，也可以像 Transformer 一样包含许多计算步骤。<a href="https://d2l.ai/chapter_introduction/index.html#models">[来源：模型的定义]</a></p>
+<figure><p><strong>客户的话</strong> → <strong>模型进行计算</strong> → <strong>预测：退货或换货</strong></p><figcaption>这是对客服分类过程的简化示意。实际处理文字时，还需要把文字转换为可计算的数字，后面会展开。</figcaption></figure>
+<p>在专门的退换货分类工具中，任务可以预先固定，不必每次都告诉它“判断退货还是换货”。聊天模型则常常同时接收任务说明和客户的话。</p></section>
+<section><h2>学习例子与模型，各做什么？</h2><p><strong>学习例子</strong>提供客户说过的话和人工确认的类别。<strong>模型</strong>负责对输入作计算，给出预测。训练过程利用例子调整模型。</p><p>因此，保存了一份带答案的客服记录，不等于已经得到能判断新话语的模型。模型也不必每次翻遍原始记录、找到一条一模一样的话才能预测。不过，能给出预测不代表预测一定正确。</p><p>这里先理解作用。下一步会用一个很小的数字模型，打开“计算”这一部分，看参数怎样影响结果。</p></section>
+<section><h2>一个检查</h2><p>你拿到一个已经训练好的退换货模型，它收到一句从未原样见过的客户话语。仅仅因为这句话是新的，它就必定无法给出预测吗？先想一下，再展开核对。</p><details><summary>核对思路</summary><p>不一定。模型可以对新的输入作计算并给出预测，不要求每句话都在学习例子中原样出现。但这个预测是否正确，还需要检查。“能够计算”与“判断正确”是两件事。</p></details><p>回到对话，用自己的话说说模型在这个过程里负责什么。有不清楚的地方直接追问我，我们再换例子。</p></section>
+<p>本课主资料：<a href="https://d2l.ai/chapter_introduction/index.html#models">《动手学深度学习》1.2.2 Models</a>，只需关注第一段对模型作用的解释。复习见<a href="../reference/learning-from-examples.html">概念速查</a>。</p>
+</main></body></html>

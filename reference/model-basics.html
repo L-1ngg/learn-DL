@@ -1,0 +1,7 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>速查 · 模型、参数与损失</title><link rel="stylesheet" href="../assets/course.css"></head><body><main>
+<nav><a href="../lessons/0001-why-machine-learning.html">当前第一课</a><a href="../drafts/model-parameters.html">参数实验草稿</a></nav><h1>模型、参数与损失</h1>
+<p>本工作区的入门术语。例子统一采用：<code>预测值 = w × 输入值</code>。</p>
+<dl><dt><strong>模型 · Model</strong></dt><dd>根据输入计算预测的规则，通常包含可学习的参数。</dd><dt><strong>参数 · Parameter</strong></dt><dd>模型中可通过训练调整的数。本例是 w。</dd><dt><strong>目标值 · Target</strong></dt><dd>训练例子中用来与预测比较的答案。本例输入 3 对应目标 6。</dd><dt><strong>预测 · Prediction</strong></dt><dd>模型算出的结果，不保证正确。w = 1 时，输入 3 的预测为 3。</dd><dt><strong>损失 · Loss</strong></dt><dd>衡量预测与目标差距的数。本课采用平均平方误差：把每个误差平方后取平均。</dd><dt><strong>训练 · Training</strong></dt><dd>根据数据和损失调整模型参数的过程。</dd><dt><strong>推理 · Inference</strong></dt><dd>使用已有参数对输入计算输出。在本课中，固定 w 后做一次乘法；不需要目标值。</dd></dl>
+<section><h2>不要混淆</h2><p>本例调整的是 w，输入和目标保持不变。训练数据上的损失低，不等于对没见过的数据也预测准确。本课的乘法模型不是 Transformer，只用于先理解参数的作用。</p></section>
+<p>来源：<a href="https://d2l.ai/chapter_linear-regression/linear-regression.html">《动手学深度学习》Linear Regression</a>。本课平方损失省略教材中的 1/2 常数，不影响哪个 w 最优。</p>
+</main></body></html>

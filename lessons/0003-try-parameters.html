@@ -1,0 +1,27 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>03 · 让程序尝试参数</title><link rel="stylesheet" href="../assets/course.css"></head><body><main>
+<nav><a href="0002-what-is-a-model.html">上一课</a><a href="../reference/parameter-search.html">本课速查</a></nav>
+<p class="meta">第三课 · 从手动尝试到程序尝试</p><h1>让程序尝试参数</h1>
+<p>沿用刚才的例子：输入为 3，目标为 6，预测等于输入乘以 w。损失取预测与目标之差的绝对值。今天只把手动尝试交给程序。</p>
+<section><h2>先定一个起点，再逐个尝试</h2><p>先保存 w = 0 的结果。程序接着尝试 1、2、3，每次都计算预测和损失；只有新损失更小时，才替换保存的最佳参数。</p>
+<pre><code>x = 3
+target = 6
+
+best_w = 0
+best_loss = abs(x * best_w - target)
+
+for w in [1, 2, 3]:
+    prediction = x * w
+    loss = abs(prediction - target)
+    print("w =", w, "prediction =", prediction, "loss =", loss)
+
+    if loss &lt; best_loss:
+        best_w = w
+        best_loss = loss
+
+print("best_w =", best_w, "best_loss =", best_loss)</code></pre>
+<p><code>[1, 2, 3]</code> 是候选数的列表；<code>for</code> 让 w 依次取这些值；<code>if</code> 表示条件成立时才执行缩进的代码。<code>best_w</code> 保存截至目前最好的参数，不会因为后来试了更差的参数就丢失。</p>
+<p>运行文件：<a href="../exercises/0001-try-parameters.py">0001-try-parameters.py</a>。在仓库根目录执行：</p><pre><code>uv run exercises/0001-try-parameters.py</code></pre>
+<details><summary>核对结果</summary><p>候选 w = 1、2、3 的损失依次是 3、0、3。最后保存 best_w = 2、best_loss = 0。虽然循环最后尝试的是 3，保存的最佳参数仍然是 2。</p></details></section>
+<section><h2>只在尝试过的值中找最好</h2><p>这是教学用的有限枚举，不是梯度下降。它自动寻找较低损失的参数，但只考察起点和列出的候选值。参数很多时，逐个组合尝试会很昂贵；后面再学习更有效的更新方法。参数与损失的关系见<a href="https://d2l.ai/chapter_linear-regression/linear-regression.html#loss-function">《动手学深度学习》3.1.1.2</a>，教材用平方损失，本例沿用绝对误差。</p></section>
+<section><h2>改一个数，先猜再运行</h2><p>保持候选值不变，把 target 从 6 改成 7。程序会保留哪个 w？最小损失是多少？</p><details><summary>核对思路</summary><p>初始 w = 0 的损失为 7；候选 1、2、3 的损失分别为 4、1、2，所以保留 w = 2，损失为 1。这不代表所有可能的 w 中没有更好的值，只代表本次尝试过的值中它最好。</p></details><p>把你的预测或疑问发回对话；不熟悉循环或缩进，就在这一小段代码里继续讨论。</p></section>
+</main></body></html>

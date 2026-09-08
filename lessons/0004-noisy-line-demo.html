@@ -1,0 +1,15 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Demo 1 · 拟合带噪声的直线</title><link rel="stylesheet" href="../assets/course.css"></head><body><main>
+<nav><a href="0003-try-parameters.html">前期基础</a><a href="../demos/01-noisy-line/README.md">操作说明</a><a href="../reference/parameter-search.html">参数与损失速查</a></nav>
+<h1>Demo 1：从散点中学出一条直线</h1><p>这次把参数、损失与训练放进一个完整实验。目标：跑出图，再改一个条件解释变化。</p>
+<pre><code>uv run demos/01-noisy-line/main.py</code></pre>
+<p>模型是 <code>预测 = x*w+b</code>。w 控制斜率，b 控制上下平移。数据按 <code>目标 = 2*x+1+随机噪声</code> 生成。</p>
+<figure><img src="../demos/01-noisy-line/outputs/results.png" alt="左图为拟合直线和训练、测试散点；右图为三种学习率的损失曲线。请先运行 demo 生成图像。" style="width:100%"><figcaption>左图：学习到的直线接近真实关系。右图：学习率过小进展慢，过大误差上升；纵轴为对数刻度。图片由本地运行生成。</figcaption></figure>
+<section><h2>只读核心训练循环</h2><pre><code>prediction = x * w + b
+loss = ((prediction - y) ** 2).mean()
+optimizer.zero_grad()
+loss.backward()
+optimizer.step()</code></pre><p>x 和 y 是装有一批数字的 tensor，可以先当作能够整体计算的数组。前两行同时计算这一批例子的预测与均方误差。后三行依次清空旧梯度、自动计算梯度、更新参数。<a href="https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html">来源：PyTorch 官方训练教程</a>。</p></section>
+<section><h2>从图里读出三个现象</h2><p>180 个点参与训练，另 60 个测试点只在训练后核对。拟合线不会穿过每个点，因为观测带有噪声。相同数据和初始参数下，改变学习率会显著改变训练结果。</p><p>本次基准：学习率 0.05，训练 MSE 约 0.137，测试 MSE 约 0.156。这只反映当前人工数据集，不代表真实任务的可靠性。测试集不用于选择设置，实际调参还需验证集。</p></section>
+<section><h2>轮到你改变一个条件</h2><p>把生成噪声的幅度从 <code>0.4</code> 改为 <code>0.0</code>。先猜：点会如何分布？参数应接近多少？损失会不会更低？然后运行，看结果是否符合预期。</p><details><summary>运行后再核对</summary><p>点会落在 y=2x+1 上；合适的学习率下，w 和 b 会接近 2 和 1，损失可降得很低。学习率过大的实验仍可能失败，去掉噪声没有修复过大的更新步长。</p></details><p>运行会覆盖上次图表，先记录基准数字。把观察或不懂的代码发回对话，我们围绕实际结果继续。</p></section>
+<p>主资料：<a href="https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html">PyTorch 优化教程</a>，本次只读优化循环；<a href="https://d2l.ai/chapter_linear-regression/linear-regression.html">D2L 线性回归</a>用于查偏置和噪声背景。</p>
+</main></body></html>
