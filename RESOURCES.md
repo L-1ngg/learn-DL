@@ -25,3 +25,5 @@
 ## Demo 2 补充来源
 
 - [PyTorch BCEWithLogitsLoss](https://docs.pytorch.org/docs/stable/generated/torch.nn.BCEWithLogitsLoss.html)：分类损失与 sigmoid 的组合，Context7 检索未命中精确条目，改为核对当前安装的 PyTorch 类文档。
+
+- [PyTorch 保存与加载模型](https://docs.pytorch.org/tutorials/beginner/saving_loading_models.html)：已核对保存最佳参数需 deepcopy 而非可变引用，用于 Demo 3 检查点。

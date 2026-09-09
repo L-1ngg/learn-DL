@@ -2,12 +2,14 @@
 
 目标：[亲手实现简化的 Transformer](MISSION.md)。
 
-**当前：[Demo 2：从直线到弯曲边界](lessons/0005-circle-classification.html)** · [代码与操作说明](demos/02-circle-classification/README.md)
+**当前：[Demo 3：亲眼观察过拟合](lessons/0006-overfitting.html)** · [代码与操作说明](demos/03-overfitting/README.md)
+
+[Demo 2：从直线到弯曲边界](lessons/0005-circle-classification.html)
 
 上一实验：[Demo 1：拟合带噪声的直线](lessons/0004-noisy-line-demo.html)
 
 ```bash
-uv run demos/02-circle-classification/main.py
+uv run demos/03-overfitting/main.py
 ```
 
 - [第一课：为什么需要机器学习？](lessons/0001-why-machine-learning.html)

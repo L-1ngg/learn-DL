@@ -13,3 +13,5 @@
 - 当前 WSL 可见 8 逻辑 CPU、约 11 GiB 内存，RTX 4060 Laptop 8 GB；PyTorch 2.14.0 CUDA 13.0 已实测 GPU 矩阵运算和反向传播。首个 demo 使用 CPU。资源空闲量会变化。
 
 - 2026-09-08：用户批准进入 Demo 2。已提供二维圆分类，先解释 Linear(2,16) → Tanh → Linear(16,1) 和形状，再按疑问补张量或交叉熵知识。不要假设用户理解新 API。
+
+- 2026-09-09：当前 demo 为 `demos/03-overfitting/main.py`。先从验证曲线与边界解释过拟合，再按问题拆早停。Adam 是本次新增工具，已说明其与 SGD 的差异，未假设用户掌握公式。
