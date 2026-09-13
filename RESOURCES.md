@@ -2,6 +2,11 @@
 
 ## Knowledge
 
+- [PyTorch CrossEntropyLoss](https://docs.pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html)：2026-09-13 核对安装版本官方文档，确认接收原始 logits 与类别 ID，不预先 softmax；用于 Demo 6 各位置的下一字训练损失，Context7 检索作为补充。
+
+- [PyTorch Embedding](https://docs.pytorch.org/docs/stable/generated/torch.nn.Embedding.html)：2026-09-13 读取安装版本官方 docstring，核对整数索引查表、参数形状与初始化；Context7 检索作为补充。本节用人为固定表演示，不宣称已有语义学习。
+- [Attention Is All You Need §3.5](https://arxiv.org/html/1706.03762v7#S3.SS5)：2026-09-13 已读取位置编码正文，核对与输入 embedding 同维相加、固定和可学习方案；入门课先用绝对位置查表，暂不展开正弦公式。
+
 - [PyTorch：Optimizing Model Parameters](https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html)
   2026-09-08 已核对官方正文的 zero_grad、backward、step 顺序；用于噪声直线 demo 的自动求导训练循环。
 - [PyTorch：Automatic Differentiation](https://docs.pytorch.org/tutorials/beginner/basics/autogradqs_tutorial.html)
@@ -27,3 +32,5 @@
 - [PyTorch BCEWithLogitsLoss](https://docs.pytorch.org/docs/stable/generated/torch.nn.BCEWithLogitsLoss.html)：分类损失与 sigmoid 的组合，Context7 检索未命中精确条目，改为核对当前安装的 PyTorch 类文档。
 
 - [PyTorch 保存与加载模型](https://docs.pytorch.org/tutorials/beginner/saving_loading_models.html)：已核对保存最佳参数需 deepcopy 而非可变引用，用于 Demo 3 检查点。
+
+- [PyTorch scaled_dot_product_attention](https://docs.pytorch.org/docs/stable/generated/torch.nn.functional.scaled_dot_product_attention.html)：2026-09-09 读取已安装版本官方 docstring，核对缩放、softmax 与 causal mask，手写 demo 与实际算子比较通过。

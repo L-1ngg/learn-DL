@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>attention 函数逐行速查</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body><main><nav><a href="../lessons/0008-attention-scores.html">分数矩阵小课</a><a href="attention.html">术语速查</a></nav>
+<h1>attention 函数逐行速查</h1><p>对应 demos/04-attention/main.py 的二维、CPU 教学实现；按需阅读，每次只展开一个计算阶段。</p>
+<pre><code>def attention(q, k, v, causal=False):
+    scores = q @ k.T / math.sqrt(q.shape[-1])
+    if causal:
+        future = torch.ones(scores.shape, dtype=torch.bool).triu(diagonal=1)
+        scores = scores.masked_fill(future, float('-inf'))
+    weights = torch.softmax(scores, dim=-1)
+    output = weights @ v
+    return scores, weights, output</code></pre>
+<section><h2>输入与返回值</h2><p>q、k、v 是调用者已经算好的张量；函数内部不创建或训练 wq/wk/wv。causal 默认 False，传 True 才执行遮罩。return 返回三个值，可由 scores, weights, output = attention(...) 依次接收；causal=True 时返回的 scores 已包含 -inf。</p>
+<table><thead><tr><th>张量</th><th>一般二维形状</th><th>本例</th></tr></thead><tbody><tr><td>q</td><td>(N, d)</td><td>(3, 2)</td></tr><tr><td>k</td><td>(M, d)</td><td>(3, 2)</td></tr><tr><td>v</td><td>(M, d_v)</td><td>(3, 2)</td></tr><tr><td>scores / weights</td><td>(N, M)</td><td>(3, 3)</td></tr><tr><td>output</td><td>(N, d_v)</td><td>(3, 2)</td></tr></tbody></table>
+<p>N 是查询个数，M 是可读取位置个数；Q/K 向量维度必须一致，K/V 的位置个数必须一致。V 的向量维度可以不同于 Q/K。本 demo 是 N=M 的自注意力。</p></section>
+<section><h2>分数：q @ k.T / sqrt(d)</h2><p>二维 k.T 交换行列；结果的 scores[i,j] = Q_i 与 K_j 的点积 / √d。@ 是矩阵乘法，* 是逐元素乘法，不能替换。q.shape[-1] 取向量维度 d，而不是位置个数。</p><p>详见<a href="../lessons/0008-attention-scores.html">带数值的分解</a>和<a href="https://docs.pytorch.org/docs/stable/generated/torch.matmul.html">torch.matmul</a>。</p></section>
+<section><h2>遮罩：True 表示这一格禁止读取</h2><pre><code>torch.ones((3,3), dtype=torch.bool)
+# 每格都是 True
+
+.triu(diagonal=1)
+# [[False, True,  True ],
+#  [False, False, True ],
+#  [False, False, False]]</code></pre><p>triu 保留上三角，其他位置置零（布尔值 False）；diagonal=1 从主对角线上方开始保留。主对角线对应读取自己，不遮住它。</p><p>masked_fill 把 future 为 True 的分数替换为 -inf，返回新张量，重新赋给 scores。softmax 后这些位置权重为 0。若改成分数 0，exp(0)=1，并不能禁止读取。此处 mask 的 True 表示禁止；不要直接套用到其他 API 的布尔 mask 约定。</p><p><a href="https://docs.pytorch.org/docs/stable/generated/torch.triu.html">triu</a> · <a href="https://docs.pytorch.org/docs/stable/generated/torch.Tensor.masked_fill.html">masked_fill</a></p></section>
+<section><h2>比例：softmax(scores, dim=-1)</h2><p>最后一维是被读取位置，所以逐行归一化：每个读取者有自己的一组比例。dim=0 则是沿列归一化，不符合此处每个读取者分配比例的含义。</p><pre><code>Full，A 行：[0.7071, 0, 0.7071] → [0.4011, 0.1978, 0.4011]
+Causal，A 行：[0.7071, -inf, -inf] → [1, 0, 0]</code></pre><p>数学定义是 exp(s_j)/Σexp(s)。数值计算可先减去本行最大值再取指数，结果不变，可避免指数过大。一般自定义遮罩若把整行都设为 -inf，这种 softmax 会产生 NaN；本例每行至少允许读自己，不会出现该情况。</p><p><a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Softmax.html">Softmax 官方定义</a></p></section>
+<section><h2>混合：weights @ v</h2><pre><code>output[i, c] = Σ_j weights[i, j] * v[j, c]
+
+Full，A 的输出 ≈ [8.0222, 11.9778]
+Causal，A 的输出 = [10, 0]</code></pre><p>i 选读取者，j 遍历被读取位置，c 选内容的坐标。相同的一行权重应用于 V 的每个坐标。只把 wv 的 10 改成 30，权重不变，输出第一维变为三倍，第二维不变。</p></section>
+<section><h2>实现边界与验证</h2><p>这是无 batch、无多头、无 dropout 的演示。推广到 batch/多头需要重新处理维度；高维张量不应直接沿用 k.T，通常交换最后两维。当前 future 默认创建在 CPU，迁移 GPU 需同时处理遮罩设备。这些属于后续实现内容。</p><p>2026-09-13：读取安装版本 matmul、softmax、triu 文档；当前固定输入的 Full/Causal 输出均与官方 scaled_dot_product_attention 通过 torch.testing.assert_close 对照。这验证当前示例，不代表通用设备或所有输入均已测试。</p><p>主来源：<a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.functional.scaled_dot_product_attention.html">PyTorch scaled_dot_product_attention</a>。遇到不清楚的行，把它发给我，我们逐格计算。</p></section>
+</main></body></html>

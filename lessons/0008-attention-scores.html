@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>读懂 attention · 一行代码如何比较所有位置</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body><main>
+<nav><a href="0007-attention.html">回顾 Demo 4</a><a href="../reference/attention-function.html">函数逐行速查</a></nav>
+<p class="meta">Transformer 实现基础 · 本段只读懂分数矩阵</p>
+<h1>一行代码，怎样比较所有位置？</h1>
+<p>你已经理解 Q/K 决定读取比例。这次把手算对应到 Python：读完后，能解释 scores 中任意一个格子从哪里来。</p>
+<pre><code>scores = q @ k.T / math.sqrt(q.shape[-1])</code></pre>
+<section><h2>1 · 先看输入的形状</h2>
+<pre><code>q = k = [[1, 0],   # A
+         [0, 1],   # B
+         [1, 1]]   # C
+
+q.shape = (3, 2)   # 3 个位置，每个位置 2 个数</code></pre>
+<p>函数接收已经生成好的 Q/K/V；生成它们的 x @ wq 等计算在调用函数之前完成。本例 Q=K 是参数选择的结果，函数本身不要求两者相等。</p></section>
+<section><h2>2 · k.T 把每个 K 从一行变成一列</h2>
+<pre><code>k                     k.T
+[[1, 0],              [[1, 0, 1],
+ [0, 1],               [0, 1, 1]]
+ [1, 1]]                A  B  C</code></pre>
+<p>矩阵乘法取左边的一行和右边的一列，对应相乘再相加。因此 q @ k.T 就是让每个 Q 分别与每个 K 做点积。</p>
+<pre><code>结果第 B 行、第 C 列
+= Q_B · K_C
+= 0×1 + 1×1
+= 1
+
+q @ k.T = [[1, 0, 1],
+           [0, 1, 1],
+           [1, 1, 2]]</code></pre>
+<p>形状：(3, 2) @ (2, 3) → (3, 3)。结果的行是读取者，列是被读取位置。<a href="https://docs.pytorch.org/docs/stable/generated/torch.matmul.html">官方矩阵乘法说明</a>。</p></section>
+<section><h2>3 · 所有分数除以同一个数</h2>
+<pre><code>q.shape[-1] = 2       # 最后一个维度的长度
+math.sqrt(2) ≈ 1.414
+
+scores ≈ [[0.707, 0,     0.707],
+          [0,     0.707, 0.707],
+          [0.707, 0.707, 1.414]]</code></pre>
+<p>分母取 Q/K 向量的维度，不是位置个数。在常见独立、零均值、单位方差假设下，d 项乘积之和的方差随 d 增长，除以 √d 可控制尺度，避免 softmax 过于集中。这是缩放的动机，不是所有输入都满足的统计保证。</p></section>
+<section><h2>停下来核对一个格子</h2>
+<p>不看上面的结果，算出 scores 的第 C 行、第 B 列，并说明它表示谁与谁的匹配。</p>
+<details><summary>完成后展开反馈</summary><p>Q_C=[1,1]，K_B=[0,1]；点积为 1，除以 √2 后约 0.707。它表示 C 读取 B 时的缩放匹配分数，还不是读取比例。若算出 1，说明你完成了点积，尚未缩放。</p></details>
+<p>把计算或不懂的符号发给我。我们确认这一行后，再继续 mask 和 dim=-1；不需要一次读完整份速查。</p></section>
+<p>主来源：<a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.functional.scaled_dot_product_attention.html">PyTorch 官方注意力计算示例</a>。2026-09-13 已核对安装版本文档，并将当前 demo 的两种模式与官方算子实际对照通过。</p>
+</main></body></html>

@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Token 与位置速查</title><link rel="stylesheet" href="../assets/course.css"></head><body><main><nav><a href="../lessons/0009-token-and-position.html">返回小课</a><a href="attention.html">attention 术语</a></nav><h1>Token embedding 与位置</h1>
+<dl><dt>token</dt><dd>文本切分后的处理单位，可能是字、词的一部分或其他片段。本课采用人工按字切分。</dd><dt>token ID</dt><dd>词表中的整数编号，用于查表，不直接衡量语义、重要性或位置。</dd><dt>token embedding</dt><dd>按 token ID 取出的向量。表通常是可训练参数；同一个 ID 在这一查表阶段取同一行。</dd><dt>位置编号</dt><dd>token 在序列中的位置。本例从 0 开始，与 token ID 是两套独立编号。</dd><dt>位置编码</dt><dd>向模型提供位置信息的方法。可采用固定正弦编码、可学习位置向量等。RoPE 等方法的作用位置和计算不同，不能一律理解为在输入处相加。</dd></dl>
+<pre><code>本课采用绝对位置向量相加：
+x[i] = token_table[token_ids[i]] + position_table[i]
+q = x @ wq
+k = x @ wk
+v = x @ wv</code></pre><p>token 表形状 (词表大小, d)，位置表形状 (支持的位置个数, d)，长度为 N 的输入查表后形状 (N, d)，相加后不增加维度。没有 batch 维是为了简化演示。</p><p>位置表示提供信息，不保证随机参数已经会理解语序。数值通常在训练中形成用途，坐标不必各自有可命名的含义。</p><p>来源：<a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Embedding.html">Embedding 官方文档</a> · <a href="https://arxiv.org/html/1706.03762v7#S3.SS5">原论文 §3.5</a></p></main></body></html>

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>文字如何进入 attention</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body><main><nav><a href="0007-attention.html">回顾 attention</a><a href="../reference/token-and-position.html">本节速查</a></nav>
+<p class="meta">Transformer 输入 · 两张表，一次相加</p><h1>从“我爱猫”到输入向量</h1>
+<p>本节目标：亲手算出一个 token 在某个位置的输入向量，并把它接回 x → Q/K/V。先读第一段，后面的部分按需展开。</p>
+<section><h2>1 · 先切分，再编号</h2><p>本例人为规定一个汉字是一个 token（文本处理单位）。真实 tokenizer 不一定按字切分，token 也不一定等于一个词。</p><pre><code>文本：我爱猫
+tokens：[我, 爱, 猫]
+词表：我 → 0，爱 → 1，猫 → 2
+token IDs：[0, 1, 2]</code></pre><p>ID 是查表的编号；2 不代表比 1 更重要，也不代表两者语义接近。这是本例的小词表，不是某个现有模型的编号。</p></section>
+<section><h2>2 · 按 token ID 查一行向量</h2><table><thead><tr><th>ID</th><th>token</th><th>embedding</th></tr></thead><tbody><tr><td>0</td><td>我</td><td>[1, 0]</td></tr><tr><td>1</td><td>爱</td><td>[0, 1]</td></tr><tr><td>2</td><td>猫</td><td>[1, 1]</td></tr></tbody></table><p>这张表叫 token embedding 表。每个 token 查出一行，三个 token 就得到形状 (3, 2) 的张量。通常表中数值是可训练参数；这里人工指定，坐标不赋予语言含义。</p><pre><code>我爱猫 → [[1,0], [0,1], [1,1]]
+猫爱我 → [[1,1], [0,1], [1,0]]</code></pre><p>同一个 token 在这一步总是查同一行。“我爱我”的两个“我”查出的向量相同；后面位置和上下文计算会使它们的表示可能不同。<a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Embedding.html">PyTorch Embedding：按整数索引查表</a>。</p><p>先猜：“猫猫我”会查出哪三行？</p><details><summary>展开核对</summary><pre><code>[[1,1], [1,1], [1,0]]</code></pre><p>两个“猫”查同一行，不会因为出现两次就分配新 ID。</p></details></section>
+<section><h2>3 · 位置也查一张表</h2><details><summary>理解查表后，继续位置向量</summary><p>行的排列保存了输入顺序，但不带位置信息的 Full attention 不会把“第几行”作为特征参与点积；重排输入会让输出相应重排。给每个位置一个向量，就能让计算显式利用位置信息。</p><pre><code>位置 0 → [0.0, 0.0]
+位置 1 → [0.1, 0.2]
+位置 2 → [0.2, 0.4]</code></pre><p>这些数也是手算用的示意值，不是标准正弦公式，也不是训练结果。我们先采用可学习的绝对位置 embedding 这种形式：按位置编号查表。</p><p>把同一位置的两个向量逐项相加：</p><pre><code>“我爱猫”
+位置 0 的 我：[1,0] + [0.0,0.0] = [1.0,0.0]
+位置 1 的 爱：[0,1] + [0.1,0.2] = [0.1,1.2]
+位置 2 的 猫：[1,1] + [0.2,0.4] = [1.2,1.4]</code></pre><p>这里是加法，不是拼接；相加后每个向量仍然是两个数。换成“猫爱我”时，“我”仍查同一个 token 向量，但它的位置向量变成位置 2 的那一行。</p><p>causal mask 限制谁能读谁，也引入方向约束；位置向量把位置编码进表示。不能把“不带位置的 Full attention”的结论无条件套到有遮罩的模型。</p></details></section>
+<section><h2>4 · 接回 attention</h2><details><summary>看可运行的完整小例子</summary><p>在项目环境中运行下列代码。不训练，不下载 tokenizer 或模型。</p><pre><code>import torch
+
+vocab = {"我": 0, "爱": 1, "猫": 2}
+text = "我爱猫"
+ids = torch.tensor([vocab[ch] for ch in text])
+positions = torch.arange(len(ids))
+
+token_embedding = torch.nn.Embedding.from_pretrained(
+    torch.tensor([[1., 0.], [0., 1.], [1., 1.]]), freeze=False
+)
+position_embedding = torch.nn.Embedding.from_pretrained(
+    torch.tensor([[0., 0.], [0.1, 0.2], [0.2, 0.4]]), freeze=False
+)
+x = token_embedding(ids) + position_embedding(positions)
+print(x)
+# tensor([[1.0000, 0.0000],
+#         [0.1000, 1.2000],
+#         [1.2000, 1.4000]], grad_fn=...)
+
+# 接回上一节的投影：
+# q = x @ wq
+# k = x @ wk
+# v = x @ wv</code></pre><p>freeze=False 表示允许训练更新表中参数；这段代码没有训练循环，所以并未更新。词表只含三个字，位置表只含三个位置，示例仅支持这个范围。普通 nn.Embedding(3, 2) 默认随机初始化；这里加载固定表是为了能手算。</p></details></section>
+<section><h2>用一个变化检验理解</h2><p>把“我爱猫”换成“猫爱我”。最后的“我”相加后得到什么？它的 token ID 是否变化？</p><details><summary>完成后展开反馈</summary><p>ID 仍是 0；token 向量仍为 [1,0]。位置变成 2，位置向量为 [0.2,0.4]，相加得 [1.2,0.4]。区分 token ID 与位置编号，是这一节的关键。</p></details><p>把不清楚的一步发给我，我们只展开那一步；阅读完成不等于需要立刻进入下一节。</p></section>
+<p>主来源：<a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Embedding.html">PyTorch Embedding</a>；<a href="https://arxiv.org/html/1706.03762v7#S3.SS5">Attention Is All You Need §3.5</a>。2026-09-13 已读取官方安装版本查表文档和论文位置编码正文。原论文采用正弦/余弦位置编码，也讨论可学习位置 embedding；本课先学查表相加，后续再区分正弦编码与 RoPE。</p>
+</main></body></html>
