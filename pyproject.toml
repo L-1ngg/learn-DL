@@ -7,3 +7,10 @@ dependencies = [
     "matplotlib>=3.11.1",
     "torch>=2.14.0",
 ]
+
+[project.optional-dependencies]
+sft = [
+    "accelerate>=1.10,<2",
+    "peft>=0.17,<0.19",
+    "transformers>=4.51,<5",
+]

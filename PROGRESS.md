@@ -2,7 +2,9 @@
 
 ## 当前状态
 
-- 当前：用户要求下一阶段 demo，入口为 `demos/06-next-token/main.py`。把 embedding、单头 causal attention 和预测层接入训练，先讲输入/答案错开一位，再逐步解释预测层与生成；还不是完整 Transformer。
+- 当前：用户明确进入 SFT，选定中文问答与固定格式输出方向。入口为 `demos/SFT.md`：07 标签与 loss mask → 08 玩具起点全参数 SFT → 09 真实 Qwen LoRA。先从 Demo 7 的第一个回答 token 开始讲，尚未收到本阶段学习练习结果。
+- 运行证据：Demo 7/8 在 CPU 运行；Demo 9 在本机 CUDA 完成六个 epoch、adapter 重载及独立推理。固定四条测试的目标 JSON/类别正确数从 0/4 到 4/4，仅作小样本演示；五项实现检查通过，不等同于用户掌握或业务泛化证明。
+- Demo 6：已创建下一字预测训练闭环并讲解原理，用户随后主动转入 SFT；Transformer 各部件与标签错位的独立练习尚未全部完成，按需回补，不以“已经讲过”认定掌握。
 - Demo 5：已小步讲解 token ID、位置编号、两张表、相加和 embedding 参数训练；用户自述理解，未提交独立修改结果。Demo 6 的助手运行证据不能替代用户掌握证据。
 - Attention：用户能解释修改 wv 不改变读取比例，维度缩放的修正为自述理解；见 `learning-records/0004-attention-weights-and-values.md`。函数形状与转置练习尚未作答。
 - 已验证：能解释关键词规则的局限，区分输入、标签和预测；知道记录错误不等于学习更新。证据见 `learning-records/0002-input-label-prediction.md`。

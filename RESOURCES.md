@@ -2,6 +2,10 @@
 
 ## Knowledge
 
+- [Transformers chat templates](https://huggingface.co/docs/transformers/chat_templating)：2026-09-13 通过 Context7 读取官方文档示例，核对训练完整消息与生成前缀的 add_generation_prompt 用法；实际 Qwen tokenizer 检查答案边界与 EOS。
+- [PEFT quicktour](https://huggingface.co/docs/peft/quicktour)：2026-09-13 读取官方 get_peft_model/LoraConfig、save_pretrained、PeftModel.from_pretrained 工作流，Demo 9 完成真实训练、重载和推理验证。
+- [Qwen2.5-0.5B-Instruct 官方模型卡](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct)：2026-09-13 读取模型结构、语言支持与加载示例；Demo 9 固定 revision `7ae557604adf67be50417f59c2c2f167def9a775`，这是已有指令微调的模型，继续做任务 SFT。
+
 - [PyTorch CrossEntropyLoss](https://docs.pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html)：2026-09-13 核对安装版本官方文档，确认接收原始 logits 与类别 ID，不预先 softmax；用于 Demo 6 各位置的下一字训练损失，Context7 检索作为补充。
 
 - [PyTorch Embedding](https://docs.pytorch.org/docs/stable/generated/torch.nn.Embedding.html)：2026-09-13 读取安装版本官方 docstring，核对整数索引查表、参数形状与初始化；Context7 检索作为补充。本节用人为固定表演示，不宣称已有语义学习。

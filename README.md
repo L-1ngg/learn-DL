@@ -2,7 +2,9 @@
 
 目标：[亲手实现简化的 Transformer](MISSION.md)。
 
-**当前：[Demo 6：训练下一字预测器](demos/06-next-token/README.md)** · [Python 代码](demos/06-next-token/main.py)
+**当前：[SFT 递进 demo：从 labels 到 Qwen LoRA](demos/SFT.md)** · [先运行 Demo 7](demos/07-sft-labels/main.py)
+
+[Demo 6：训练下一字预测器](demos/06-next-token/README.md)
 
 [Demo 5：token embedding 与位置向量](demos/05-token-embedding/README.md)
 
@@ -15,7 +17,7 @@
 上一实验：[Demo 1：拟合带噪声的直线](lessons/0004-noisy-line-demo.html)
 
 ```bash
-uv run demos/06-next-token/main.py
+uv run demos/07-sft-labels/main.py
 ```
 
 - [第一课：为什么需要机器学习？](lessons/0001-why-machine-learning.html)
